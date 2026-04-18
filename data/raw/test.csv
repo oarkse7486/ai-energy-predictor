@@ -1,0 +1,31 @@
+description,energy_kwh,gpu,num_gpus,hours,task,model,gpu_watts,model_compute_factor,task_multiplier,batch_size
+gonna inference ResNet-50 on one a6000 for about 85.7h,9.6237,A6000,1,85.7,inference,ResNet-50,300,1.0,0.3,128.0
+How much will it cost to evaluation GPT-2 on 1 rtx 3080 for 21.7 hours?,2.6191,RTX 3080,1,21.7,evaluation,GPT-2,320,1.6,0.2,
+Planning to evaluation ViT-Large with 16 3080 GPUs for 54.9 hours with batch size 256.,135.8629,RTX 3080,16,54.9,evaluation,ViT-Large,320,2.1,0.2,256.0
+"BERT-large evaluation — 4 4090s, 44.6h with batch size 256.",37.0873,RTX 4090,4,44.6,evaluation,BERT-large,450,2.0,0.2,256.0
+"Launch a feature extraction job for GPT-2 on 4 v100 GPUs, duration 65.1 hours.",35.9094,V100,4,65.1,feature extraction,GPT-2,300,1.6,0.25,
+"running LLaMA-7B pretraining on 16 rtx 3090s, roughly 2h",12.933,RTX 3090,16,2.0,pretraining,LLaMA-7B,350,5.0,1.0,64.0
+Run training of Stable Diffusion using 16x rtx 4090 for 1.8 hours.,14.1747,RTX 4090,16,1.8,training,Stable Diffusion,450,3.5,0.9,
+How much will it cost to pretraining YOLOv8 on 4 A100s for 13.6h?,20.4298,A100,4,13.6,pretraining,YOLOv8,400,0.8,1.0,256.0
+Planning to fine-tuning ViT-Base with 8 tesla t4 GPUs for 0.5 hours.,0.2879,T4,8,0.5,fine-tuning,ViT-Base,70,1.4,0.65,64.0
+Run inference of LLaMA-7B using 16x a100 for 168 hours.,1317.4607,A100,16,168.0,inference,LLaMA-7B,400,5.0,0.3,32.0
+Planning to fine-tuning BERT-base with 1 a100 80gb GPU for 65.1h with batch size 16.,32.2959,A100,1,65.1,fine-tuning,BERT-base,400,1.5,0.65,16.0
+"GPT-2 Large, pretraining, 1x pascal, 168h",49.1527,P100,1,168.0,pretraining,GPT-2 Large,250,3.0,1.0,512.0
+"need to evaluation ViT-Base, planning 8 rtx 4090s for 0.7h",0.8587,RTX 4090,8,0.7,evaluation,ViT-Base,450,1.4,0.2,
+Pretraining ResNet-50 on 8 a10g GPUs for 4.3 hours with batch size 128.,6.5107,A10G,8,4.3,pretraining,ResNet-50,150,1.0,1.0,128.0
+"EfficientNet-B4, training, 16x rtx3090, 1.2h",6.6511,RTX 3090,16,1.2,training,EfficientNet-B4,350,0.9,0.9,64.0
+"GPT-2, training, 8x hopper, 24hrs",184.0905,H100,8,24.0,training,GPT-2,700,1.6,0.9,
+"need to inference Stable Diffusion, planning 1 P100 for 0.5 hours",0.1519,P100,1,0.5,inference,Stable Diffusion,250,3.5,0.3,256.0
+Planning to evaluation YOLOv8 on WikiText-103 with sixteen h100 GPUs for 157.7h.,343.8003,H100,16,157.7,evaluation,YOLOv8,700,0.8,0.2,
+"Launch a pretraining job for BERT-base on 16 a10g GPUs, duration 137.1 hours.",351.3615,A10G,16,137.1,pretraining,BERT-base,150,1.5,1.0,
+Run training of BERT-base using 1x rtx3080 for 85.7 hours.,31.3446,RTX 3080,1,85.7,training,BERT-base,320,1.5,0.9,
+"ViT-Large, evaluation, 16x rtx a6000, 6.6h",15.4418,A6000,16,6.6,evaluation,ViT-Large,300,2.1,0.2,64.0
+Run fine-tuning of GPT-2 using 8x 3080 for 13.6 hours.,42.3692,RTX 3080,8,13.6,fine-tuning,GPT-2,320,1.6,0.65,512.0
+Planning to fine-tuning YOLOv8 with eight rtx a6000 GPUs for 137.1h with batch size 16.,198.6453,A6000,8,137.1,fine-tuning,YOLOv8,300,0.8,0.65,16.0
+"GPT-2 Large, evaluation, 8x a6000, 1.2 hours",2.1172,A6000,8,1.2,evaluation,GPT-2 Large,300,3.0,0.2,
+"need to inference RoBERTa, planning 4 rtx 3080s for 4.3h",2.8915,RTX 3080,4,4.3,inference,RoBERTa,320,1.5,0.3,16.0
+Planning to inference Whisper-medium with 2 pascal GPUs for 157.7 hours.,47.1498,P100,2,157.7,inference,Whisper-medium,250,1.8,0.3,
+"GPT-2 inference on Common Crawl — four a10gs, 34.3 hours.",13.0134,A10G,4,34.3,inference,GPT-2,150,1.6,0.3,256.0
+Evaluation Whisper-medium on 1 rtx3080 GPU for 4.3h.,0.733,RTX 3080,1,4.3,evaluation,Whisper-medium,320,1.8,0.2,256.0
+"Launch a training job for BERT-large on 16 p100 GPUs, duration 24 hrs.",118.4418,P100,16,24.0,training,BERT-large,250,2.0,0.9,
+Run inference of EfficientNet-B4 using 8x rtx 3080 for 24 hrs.,19.8209,RTX 3080,8,24.0,inference,EfficientNet-B4,320,0.9,0.3,64.0

@@ -1,0 +1,31 @@
+description,energy_kwh,gpu,num_gpus,hours,task,model,gpu_watts,model_compute_factor,task_multiplier,batch_size
+gonna feature extraction Stable Diffusion on 8 V100s for about 168hrs,423.3629,V100,8,168.0,feature extraction,Stable Diffusion,300,3.5,0.25,
+"Launch a inference job for RoBERTa on 2 v100 GPUs, duration 17.1h.",5.6093,V100,2,17.1,inference,RoBERTa,300,1.5,0.3,
+"Distributed training of ResNet-152 across 16 a10 cards, estimated runtime 19.4h.",52.4613,A10G,16,19.4,training,ResNet-152,150,1.3,0.9,512.0
+Run inference of BERT-large using 4x 3090 for 0.8h on OpenWebText.,0.8156,RTX 3090,4,0.8,inference,BERT-large,350,2.0,0.3,
+gonna feature extraction GPT-2 Large on 16 rtx4090s for about 22.8h,149.863,RTX 4090,16,22.8,feature extraction,GPT-2 Large,450,3.0,0.25,
+"BERT-large, fine-tuning, 16x rtx3090, 75.4 hours",447.6221,RTX 3090,16,75.4,fine-tuning,BERT-large,350,2.0,0.65,128.0
+Fine-tuning: RoBERTa | 1 t4 | 13.6 hours,1.1831,T4,1,13.6,fine-tuning,RoBERTa,70,1.5,0.65,128.0
+"need to training GPT-2, planning 16 a10 gpus for 157.7h",488.0238,A10G,16,157.7,training,GPT-2,150,1.6,0.9,64.0
+"LLaMA-13B training — 16 tesla t4s, 14.7h with batch size 512.",21.0815,T4,16,14.7,training,LLaMA-13B,70,7.0,0.9,512.0
+Planning to feature extraction ViT-Large with 16 rtx 3090 GPUs for 15.9 hours with batch size 16.,57.6967,RTX 3090,16,15.9,feature extraction,ViT-Large,350,2.1,0.25,16.0
+gonna pretraining YOLOv8 on 8 rtx a6000s for about 1.8 hours,3.963,A6000,8,1.8,pretraining,YOLOv8,300,0.8,1.0,
+"ViT-Base, fine-tuning, 2x pascal, 15.9h",8.1803,P100,2,15.9,fine-tuning,ViT-Base,250,1.4,0.65,128.0
+"running BERT-large evaluation on 16 rtx 4090s, roughly 20.5h",62.5117,RTX 4090,16,20.5,evaluation,BERT-large,450,2.0,0.2,
+"Distributed evaluation of GPT-2 Large across 8 p100 cards, estimated runtime 75.4 hours.",118.3673,P100,8,75.4,evaluation,GPT-2 Large,250,3.0,0.2,32.0
+Feature extraction: Mistral-7B | 2 voltas | 96h,68.0978,V100,2,96.0,feature extraction,Mistral-7B,300,5.2,0.25,
+"Launch a pretraining job for LLaMA-13B on four A6000 GPUs, duration 15.9 hours with batch size 64.",23.7139,A6000,4,15.9,pretraining,LLaMA-13B,300,7.0,1.0,64.0
+"EfficientNet-B4, fine-tuning, fourx a6000, 5.5 hours",4.9213,A6000,4,5.5,fine-tuning,EfficientNet-B4,300,0.9,0.65,
+"running RoBERTa feature extraction on 1 rtx 4090, roughly 5.5 hours",1.0786,RTX 4090,1,5.5,feature extraction,RoBERTa,450,1.5,0.25,
+"running EfficientNet-B4 feature extraction on CIFAR-10 on 1 3080, roughly 75.4h",6.792,RTX 3080,1,75.4,feature extraction,EfficientNet-B4,320,0.9,0.25,512.0
+"need to inference VGG-16, planning 1 rtx a6000 for 1.3 hours",0.1452,A6000,1,1.3,inference,VGG-16,300,1.2,0.3,64.0
+"Distributed evaluation of EfficientNet-B4 across 16 tesla t4 cards, estimated runtime 1.3h.",0.3078,T4,16,1.3,evaluation,EfficientNet-B4,70,0.9,0.2,
+Run fine-tuning of ViT-Base using 16x a6000 for 1.7 hours.,8.9753,A6000,16,1.7,fine-tuning,ViT-Base,300,1.4,0.65,16.0
+gonna evaluation YOLOv8 on 2 A100s for about 85.7h,11.9298,A100,2,85.7,evaluation,YOLOv8,400,0.8,0.2,512.0
+"running Whisper-medium evaluation on two A6000s, roughly 0.7 hours",0.2118,A6000,2,0.7,evaluation,Whisper-medium,300,1.8,0.2,64.0
+"need to training ResNet-152, planning 8 3090s for 22.8 hours",67.7392,RTX 3090,8,22.8,training,ResNet-152,350,1.3,0.9,256.0
+Inference: GPT-2 | 1 rtx3080 | 6.6 hours,1.1812,RTX 3080,1,6.6,inference,GPT-2,320,1.6,0.3,
+"need to fine-tuning BERT-large, planning one T4 for 2h",0.1583,T4,1,2.0,fine-tuning,BERT-large,70,2.0,0.65,
+Planning to fine-tuning YOLOv8 with one a100 GPU for 12.4 hours.,2.9893,A100,1,12.4,fine-tuning,YOLOv8,400,0.8,0.65,
+Pretraining: GPT-2 Large | 4 A6000s | 96 hrs,139.9272,A6000,4,96.0,pretraining,GPT-2 Large,300,3.0,1.0,512.0
+"need to inference ResNet-50, planning 8 rtx 3080s for 126.9h",121.4489,RTX 3080,8,126.9,inference,ResNet-50,320,1.0,0.3,32.0

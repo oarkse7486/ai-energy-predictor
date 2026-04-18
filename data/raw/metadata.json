@@ -1,0 +1,214 @@
+{
+  "n_samples": 200,
+  "splits": {
+    "train": 140,
+    "val": 30,
+    "test": 30
+  },
+  "pue": 1.2,
+  "electricity_cost_usd_per_kwh": 0.1,
+  "co2_kg_per_kwh": 0.385,
+  "gpu_specs": {
+    "A100": {
+      "watts": 400,
+      "vram_gb": 80,
+      "tier": "enterprise",
+      "aliases": [
+        "a100",
+        "A100",
+        "a100 80gb"
+      ]
+    },
+    "H100": {
+      "watts": 700,
+      "vram_gb": 80,
+      "tier": "enterprise",
+      "aliases": [
+        "h100",
+        "H100",
+        "hopper"
+      ]
+    },
+    "V100": {
+      "watts": 300,
+      "vram_gb": 32,
+      "tier": "professional",
+      "aliases": [
+        "v100",
+        "V100",
+        "volta"
+      ]
+    },
+    "A10G": {
+      "watts": 150,
+      "vram_gb": 24,
+      "tier": "professional",
+      "aliases": [
+        "a10",
+        "a10g",
+        "A10G",
+        "a10 gpu"
+      ]
+    },
+    "T4": {
+      "watts": 70,
+      "vram_gb": 16,
+      "tier": "entry",
+      "aliases": [
+        "t4",
+        "T4",
+        "tesla t4"
+      ]
+    },
+    "RTX 4090": {
+      "watts": 450,
+      "vram_gb": 24,
+      "tier": "consumer",
+      "aliases": [
+        "4090",
+        "rtx 4090",
+        "rtx4090"
+      ]
+    },
+    "RTX 3090": {
+      "watts": 350,
+      "vram_gb": 24,
+      "tier": "consumer",
+      "aliases": [
+        "3090",
+        "rtx 3090",
+        "rtx3090"
+      ]
+    },
+    "RTX 3080": {
+      "watts": 320,
+      "vram_gb": 10,
+      "tier": "consumer",
+      "aliases": [
+        "3080",
+        "rtx 3080",
+        "rtx3080"
+      ]
+    },
+    "A6000": {
+      "watts": 300,
+      "vram_gb": 48,
+      "tier": "professional",
+      "aliases": [
+        "a6000",
+        "A6000",
+        "rtx a6000"
+      ]
+    },
+    "P100": {
+      "watts": 250,
+      "vram_gb": 16,
+      "tier": "professional",
+      "aliases": [
+        "p100",
+        "P100",
+        "pascal"
+      ]
+    }
+  },
+  "model_specs": {
+    "ResNet-50": {
+      "params_m": 25,
+      "compute_factor": 1.0,
+      "domain": "vision"
+    },
+    "ResNet-152": {
+      "params_m": 60,
+      "compute_factor": 1.3,
+      "domain": "vision"
+    },
+    "VGG-16": {
+      "params_m": 138,
+      "compute_factor": 1.2,
+      "domain": "vision"
+    },
+    "EfficientNet-B4": {
+      "params_m": 19,
+      "compute_factor": 0.9,
+      "domain": "vision"
+    },
+    "ViT-Base": {
+      "params_m": 86,
+      "compute_factor": 1.4,
+      "domain": "vision"
+    },
+    "ViT-Large": {
+      "params_m": 307,
+      "compute_factor": 2.1,
+      "domain": "vision"
+    },
+    "YOLOv8": {
+      "params_m": 25,
+      "compute_factor": 0.8,
+      "domain": "detection"
+    },
+    "BERT-base": {
+      "params_m": 110,
+      "compute_factor": 1.5,
+      "domain": "nlp"
+    },
+    "BERT-large": {
+      "params_m": 340,
+      "compute_factor": 2.0,
+      "domain": "nlp"
+    },
+    "DistilBERT": {
+      "params_m": 66,
+      "compute_factor": 1.2,
+      "domain": "nlp"
+    },
+    "RoBERTa": {
+      "params_m": 125,
+      "compute_factor": 1.5,
+      "domain": "nlp"
+    },
+    "GPT-2": {
+      "params_m": 117,
+      "compute_factor": 1.6,
+      "domain": "nlp"
+    },
+    "GPT-2 Large": {
+      "params_m": 774,
+      "compute_factor": 3.0,
+      "domain": "nlp"
+    },
+    "LLaMA-7B": {
+      "params_m": 7000,
+      "compute_factor": 5.0,
+      "domain": "llm"
+    },
+    "LLaMA-13B": {
+      "params_m": 13000,
+      "compute_factor": 7.0,
+      "domain": "llm"
+    },
+    "Mistral-7B": {
+      "params_m": 7000,
+      "compute_factor": 5.2,
+      "domain": "llm"
+    },
+    "Stable Diffusion": {
+      "params_m": 860,
+      "compute_factor": 3.5,
+      "domain": "generative"
+    },
+    "Whisper-medium": {
+      "params_m": 305,
+      "compute_factor": 1.8,
+      "domain": "audio"
+    }
+  },
+  "task_multipliers": {
+    "training": 0.9,
+    "fine-tuning": 0.65,
+    "pretraining": 1.0,
+    "inference": 0.3,
+    "evaluation": 0.2,
+    "feature extraction": 0.25
+  }
+}

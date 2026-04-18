@@ -3,23 +3,29 @@ model.py
 ========
 Trains, evaluates, and serializes all three model tiers:
 
-    Tier 1  NaiveBaseline      — constant mean predictor (lower-bound benchmark)
-    Tier 2  ClassicalMLModel   — combined TF-IDF + structured features → RandomForest
-    Tier 3  TransformerModel   — fine-tuned DistilBERT with a regression head
+    Tier 1  NaiveBaseline      - constant mean predictor (lower-bound benchmark)
+    Tier 2  ClassicalMLModel   - combined TF-IDF + structured features -> RandomForest
+    Tier 3  TransformerModel   - fine-tuned DistilBERT with a regression head
 
 Run end-to-end to produce model artefacts under models/:
 
     python scripts/model.py --data-dir data/raw --model-dir models --epochs 5
 
-Each model exposes a predict_single(text: str) → float interface so app.py
+Each model exposes a predict_single(text: str) -> float interface so app.py
 can run inference without knowing which tier is being used.
 """
 
 import argparse
 import json
 import logging
+import os
+import sys
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
+
+# Fix import path so this script works when called directly (e.g. via setup.py subprocess)
+# without requiring the caller to set PYTHONPATH.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import joblib
 import numpy as np
@@ -50,7 +56,7 @@ logger.info(f"Using device: {DEVICE}")
 
 def evaluate(y_true: np.ndarray, y_pred: np.ndarray) -> Dict[str, float]:
     """
-    Compute RMSE, MAE, R², and MAPE for a set of predictions.
+    Compute RMSE, MAE, R2, and MAPE for a set of predictions.
 
     Returns:
         dict with keys: rmse, mae, r2, mape
@@ -65,7 +71,7 @@ def evaluate(y_true: np.ndarray, y_pred: np.ndarray) -> Dict[str, float]:
 
 
 # ---------------------------------------------------------------------------
-# Tier 1 — Naive baseline
+# Tier 1 - Naive baseline
 # ---------------------------------------------------------------------------
 
 class NaiveBaseline:
@@ -82,7 +88,7 @@ class NaiveBaseline:
     def fit(self, y_train: np.ndarray) -> "NaiveBaseline":
         """Store the mean of the training labels."""
         self.mean_energy = float(np.mean(y_train))
-        logger.info(f"NaiveBaseline fitted — mean_energy = {self.mean_energy:.4f} kWh")
+        logger.info(f"NaiveBaseline fitted - mean_energy = {self.mean_energy:.4f} kWh")
         return self
 
     def predict(self, n: int) -> np.ndarray:
@@ -106,16 +112,16 @@ class NaiveBaseline:
 
 
 # ---------------------------------------------------------------------------
-# Tier 2 — Classical ML (Random Forest)
+# Tier 2 - Classical ML (Random Forest)
 # ---------------------------------------------------------------------------
 
 class ClassicalMLModel:
     """
-    Combined TF-IDF + structured features → RandomForestRegressor.
+    Combined TF-IDF + structured features -> RandomForestRegressor.
 
     Uses FeaturePipeline(feature_type="combined") which concatenates:
         - TF-IDF bag-of-words (captures vocabulary patterns)
-        - Regex-extracted structured features (num_gpus, hours, gpu_watts, …)
+        - Regex-extracted structured features (num_gpus, hours, gpu_watts, ...)
 
     This dual representation gives the model both surface-form and numeric
     signals, generally outperforming either alone.
@@ -126,16 +132,16 @@ class ClassicalMLModel:
         self.max_depth    = max_depth
         self.pipeline     = FeaturePipeline(feature_type="combined")
         self.regressor    = RandomForestRegressor(
-            n_estimators  = n_estimators,
-            max_depth     = max_depth,
+            n_estimators     = n_estimators,
+            max_depth        = max_depth,
             min_samples_leaf = 2,
-            n_jobs        = -1,
-            random_state  = 42,
+            n_jobs           = -1,
+            random_state     = 42,
         )
 
     def fit(self, train_df: pd.DataFrame) -> "ClassicalMLModel":
         """Fit feature pipeline and random-forest regressor on training data."""
-        logger.info("Training ClassicalMLModel (RandomForest) …")
+        logger.info("Training ClassicalMLModel (RandomForest) ...")
         X_train, y_train = self.pipeline.fit_transform(train_df)
         self.regressor.fit(X_train, y_train)
         logger.info("ClassicalMLModel training complete.")
@@ -143,9 +149,8 @@ class ClassicalMLModel:
 
     def predict(self, df: pd.DataFrame) -> np.ndarray:
         """Predict energy (kWh) for a DataFrame with a 'description' column."""
-        X    = self.pipeline.transform(df)
+        X     = self.pipeline.transform(df)
         preds = self.regressor.predict(X)
-
         return np.clip(preds, 0, None)   # Energy is non-negative
 
     def predict_single(self, text: str) -> float:
@@ -169,12 +174,12 @@ class ClassicalMLModel:
 
 
 # ---------------------------------------------------------------------------
-# Tier 3 — DistilBERT transformer
+# Tier 3 - DistilBERT transformer
 # ---------------------------------------------------------------------------
 
 class _EnergyDataset(Dataset):
     """
-    PyTorch Dataset that tokenizes text on-the-fly.
+    PyTorch Dataset that tokenises text on-the-fly.
 
     Labels are stored in log-space (log1p) so the model learns relative
     magnitude rather than absolute values across a multi-decade energy range.
@@ -215,17 +220,17 @@ class _DistilBertRegressor(nn.Module):
     DistilBERT encoder with a two-layer MLP regression head.
 
     Architecture:
-        [CLS] embedding (768-d)  →  Dropout  →  Linear(768, 256)
-        →  GELU  →  Dropout  →  Linear(256, 1)
+        [CLS] embedding (768-d)  ->  Dropout  ->  Linear(768, 256)
+        ->  GELU  ->  Dropout  ->  Linear(256, 1)
 
     Output is a single scalar in log-energy space.
     """
 
     def __init__(self, model_name: str = "distilbert-base-uncased", dropout: float = 0.2):
         super().__init__()
-        self.encoder     = DistilBertModel.from_pretrained(model_name)
-        hidden           = self.encoder.config.hidden_size   # 768
-        self.reg_head    = nn.Sequential(
+        self.encoder  = DistilBertModel.from_pretrained(model_name)
+        hidden        = self.encoder.config.hidden_size   # 768
+        self.reg_head = nn.Sequential(
             nn.Dropout(dropout),
             nn.Linear(hidden, 256),
             nn.GELU(),
@@ -235,8 +240,8 @@ class _DistilBertRegressor(nn.Module):
 
     def forward(self, input_ids: torch.Tensor, attention_mask: torch.Tensor) -> torch.Tensor:
         """Forward pass; returns shape [batch_size]."""
-        out          = self.encoder(input_ids=input_ids, attention_mask=attention_mask)
-        cls_embed    = out.last_hidden_state[:, 0, :]   # [CLS] token
+        out       = self.encoder(input_ids=input_ids, attention_mask=attention_mask)
+        cls_embed = out.last_hidden_state[:, 0, :]   # [CLS] token
         return self.reg_head(cls_embed).squeeze(-1)
 
 
@@ -245,13 +250,14 @@ class TransformerModel:
     Fine-tuned DistilBERT for energy regression.
 
     Training details:
-        - Labels are log1p-transformed to stabilize learning across the wide kWh range
-        - AdamW optimizer with linear warmup schedule and gradient clipping (max norm 1.0)
+        - Labels are log1p-transformed to stabilise learning across the wide kWh range
+        - AdamW optimiser with linear warmup schedule and gradient clipping (max norm 1.0)
+        - L2 regularisation via weight_decay=0.01
         - Best checkpoint selected by validation RMSE (in raw kWh, not log space)
 
     Inference:
         - Runs in batches; reverses the log transform with expm1
-        - Clips predictions to [0, ∞) since energy is non-negative
+        - Clips predictions to [0, inf) since energy is non-negative
     """
 
     _MODEL_NAME = "distilbert-base-uncased"
@@ -263,11 +269,11 @@ class TransformerModel:
         epochs:     int = 5,
         lr:         float = 2e-5,
     ):
-        self.max_length  = max_length
-        self.batch_size  = batch_size
-        self.epochs      = epochs
-        self.lr          = lr
-        self.tokenizer   = DistilBertTokenizerFast.from_pretrained(self._MODEL_NAME)
+        self.max_length = max_length
+        self.batch_size = batch_size
+        self.epochs     = epochs
+        self.lr         = lr
+        self.tokenizer  = DistilBertTokenizerFast.from_pretrained(self._MODEL_NAME)
         self._net: Optional[_DistilBertRegressor] = None
 
     # ------------------------------------------------------------------
@@ -293,8 +299,7 @@ class TransformerModel:
         )
 
         self._net = _DistilBertRegressor(self._MODEL_NAME).to(DEVICE)
-
-        # could tune parameters like weight decay & lr
+        # weight_decay=0.01 applies L2 regularisation to all parameters
         optimizer = torch.optim.AdamW(self._net.parameters(), lr=self.lr, weight_decay=0.01)
 
         total_steps = len(train_loader) * self.epochs
@@ -336,25 +341,20 @@ class TransformerModel:
                     )
                     val_log_preds.extend(out.cpu().numpy())
 
-            # TODO: clip doesn't help in this line so consdier getting rid of it bc
-            # are taking an exponential positive value.
             val_preds_kWh = np.clip(np.expm1(np.array(val_log_preds)), 0, None)
             val_rmse      = float(np.sqrt(mean_squared_error(y_val_raw, val_preds_kWh)))
 
-            # TODO: could potentially add early stopping
-
             logger.info(
-                f"Epoch {epoch}/{self.epochs} — "
+                f"Epoch {epoch}/{self.epochs} - "
                 f"train_loss={np.mean(train_losses):.4f}  val_RMSE={val_rmse:.4f} kWh"
             )
 
-            
             if val_rmse < best_rmse:
                 best_rmse  = val_rmse
                 best_state = {k: v.cpu().clone() for k, v in self._net.state_dict().items()}
 
         self._net.load_state_dict(best_state)
-        logger.info(f"DistilBERT training complete — best val RMSE={best_rmse:.4f} kWh")
+        logger.info(f"DistilBERT training complete - best val RMSE={best_rmse:.4f} kWh")
         return self
 
     # ------------------------------------------------------------------
@@ -369,7 +369,7 @@ class TransformerModel:
         dataset = _EnergyDataset(
             df["description"].tolist(), np.zeros(len(df)), self.tokenizer, self.max_length
         )
-        loader   = DataLoader(dataset, batch_size=self.batch_size, shuffle=False)
+        loader    = DataLoader(dataset, batch_size=self.batch_size, shuffle=False)
         log_preds: List[float] = []
 
         self._net.eval()
@@ -433,32 +433,32 @@ def train_all_models(
 
     results: Dict[str, Dict] = {}
 
-    # ── Tier 1: Naive baseline ──────────────────────────────────────────
+    # Tier 1: Naive baseline
     logger.info("=" * 50)
-    logger.info("Tier 1 — Naive Baseline")
+    logger.info("Tier 1 - Naive Baseline")
     naive = NaiveBaseline().fit(train_df["energy_kwh"].values)
     preds = naive.predict(len(y_test))
     results["naive"] = evaluate(y_test, preds)
     naive.save(model_dir / "naive")
-    logger.info(f"  Naive   → {results['naive']}")
+    logger.info(f"  Naive   -> {results['naive']}")
 
-    # ── Tier 2: Classical ML ────────────────────────────────────────────
-    logger.info("Tier 2 — Classical ML (RandomForest)")
+    # Tier 2: Classical ML
+    logger.info("Tier 2 - Classical ML (RandomForest)")
     classical = ClassicalMLModel().fit(train_df)
     preds     = classical.predict(test_df)
     results["classical"] = evaluate(y_test, preds)
     classical.save(model_dir / "classical")
-    logger.info(f"  Classical → {results['classical']}")
+    logger.info(f"  Classical -> {results['classical']}")
 
-    # ── Tier 3: DistilBERT ──────────────────────────────────────────────
-    logger.info("Tier 3 — DistilBERT Transformer")
+    # Tier 3: DistilBERT
+    logger.info("Tier 3 - DistilBERT Transformer")
     transformer = TransformerModel(epochs=epochs).fit(train_df, val_df)
     preds       = transformer.predict(test_df)
     results["transformer"] = evaluate(y_test, preds)
     transformer.save(model_dir / "transformer")
-    logger.info(f"  Transformer → {results['transformer']}")
+    logger.info(f"  Transformer -> {results['transformer']}")
 
-    # ── Persist results ─────────────────────────────────────────────────
+    # Persist results
     model_dir.mkdir(parents=True, exist_ok=True)
     with open(model_dir / "results.json", "w") as fh:
         json.dump(results, fh, indent=2)
@@ -466,7 +466,7 @@ def train_all_models(
     logger.info("=" * 50)
     logger.info("FINAL TEST-SET RESULTS")
     for name, m in results.items():
-        logger.info(f"  {name:12s}  RMSE={m['rmse']:.3f}  MAE={m['mae']:.3f}  R²={m['r2']:.3f}  MAPE={m['mape']:.1f}%")
+        logger.info(f"  {name:12s}  RMSE={m['rmse']:.3f}  MAE={m['mae']:.3f}  R2={m['r2']:.3f}  MAPE={m['mape']:.1f}%")
 
     return results
 

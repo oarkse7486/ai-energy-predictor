@@ -1,11 +1,11 @@
 """
 app.py
 ======
-AI Energy Predictor — Gradio Application
+AI Energy Predictor - Gradio Application
 
 Estimates the energy consumption, cost, and carbon footprint of AI training
 workloads described in plain English. Runs inference through three pre-trained
-models simultaneously and visualises the results with Plotly charts.
+models simultaneously and visualizes the results with Plotly charts.
 
 Running locally:
     python app.py
@@ -25,8 +25,6 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from scripts.build_features import StructuredFeatureExtractor
-
-# loading the models
 from scripts.model import NaiveBaseline, ClassicalMLModel, TransformerModel
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -93,7 +91,8 @@ CUSTOM_CSS = """
 }
 
 /* Example buttons */
-.example-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+#extracted-table table { width: 100% !important; table-layout: fixed; }
+#extracted-table td, #extracted-table th { padding: 6px 10px !important; word-wrap: break-word; }
 """
 
 THEME = gr.themes.Soft(
@@ -131,7 +130,7 @@ class ModelRegistry:
     def _load(self) -> None:
         if self._loaded:
             return
-        logger.info("Loading model artefacts …")
+        logger.info("Loading model artifacts …")
 
         for name, cls, subdir, attr in [
             ("Naive Baseline",   NaiveBaseline,    "naive",       "_naive"),
@@ -184,7 +183,7 @@ def _co2_context(co2_kg: float) -> str:
             multiple = co2_kg / threshold
             return f"≈ {multiple:.1f}× {label}"
     grams = co2_kg * 1000
-    return f"≈ {grams:.0f} g CO₂e — lighter than a cup of coffee"
+    return f"≈ {grams:.0f} g CO2e - lighter than a cup of coffee"
 
 
 def _energy_label(kwh: float) -> str:
@@ -206,7 +205,7 @@ def _energy_label(kwh: float) -> str:
 
 def _make_gauge(energy_kwh: float) -> go.Figure:
     """Gauge chart showing energy intensity against five qualitative tiers."""
-    # Map energy to a 0–100 normalised scale (log10 compressed)
+    # Map energy to a 0–100 normalized scale (log10 compressed)
     norm = min(np.log10(max(energy_kwh, 0.01) + 1) / np.log10(501) * 100, 100)
 
     COLOR_STOPS = [
@@ -292,7 +291,7 @@ def _make_bar_chart(predictions: Dict[str, float]) -> go.Figure:
 
 
 def _make_feature_radar(extracted: Dict[str, float]) -> go.Figure:
-    """Spider chart showing the normalised extracted features."""
+    """Spider chart showing the normalized extracted features."""
     labels = ["GPUs", "Hours", "GPU Watts", "Task Util.", "Model Factor"]
     # Normalise each feature to [0, 1] against known max values
     maxes  = [16, 168, 700, 1.0, 7.0]
@@ -347,7 +346,7 @@ def predict(text: str) -> Tuple:
     # ── Guard: empty input ────────────────────────────────────────────────
     if not text or not text.strip():
         empty = (
-            "—", "—", "—", "—",
+            "", "", "", "",
             go.Figure(), go.Figure(), go.Figure(),
             pd.DataFrame(columns=["Model", "Energy (kWh)", "Cost ($)", "CO₂ (kg)", "Tier"]),
             "No description provided.",
@@ -363,9 +362,9 @@ def predict(text: str) -> Tuple:
     if not predictions:
         msg = ("❌ No models loaded. Run `python setup.py` first to generate "
                "data and train models.")
-        return ("—", "—", "—", "—",
+        return ("", "", "", "",
                 go.Figure(), go.Figure(), go.Figure(),
-                pd.DataFrame(), "—", msg)
+                pd.DataFrame(), "", msg)
 
     # ── Primary estimate (best available model) ───────────────────────────
     primary_kwh = (
@@ -378,9 +377,9 @@ def predict(text: str) -> Tuple:
 
     # ── Metric markdown ───────────────────────────────────────────────────
     energy_md  = f"## ⚡ {primary_kwh:.3f} kWh\n{_energy_label(primary_kwh)}"
-    cost_md    = f"## 💵 ${cost_usd:.3f}\n*at $0.10 / kWh*"
-    co2_md     = f"## 🌱 {co2_kg:.3f} kg\n*CO₂ equivalent*"
-    context_md = f"**In context:** {_co2_context(co2_kg)}"
+    cost_md    = f"## 💵 ${cost_usd:.3f}\nat $0.10 / kWh"
+    co2_md     = f"## 🌱 {co2_kg:.3f} kg\nCO2 equivalent"
+    context_md = f"In context: {_co2_context(co2_kg)}"
 
     # ── Extracted features markdown ───────────────────────────────────────
     extracted = _extractor.extract(text)
@@ -388,11 +387,11 @@ def predict(text: str) -> Tuple:
         ("GPUs detected",    str(int(extracted["num_gpus"]))),
         ("GPU power (TDP)",  f"{extracted['gpu_watts']:.0f} W"),
         ("Duration",         f"{extracted['hours']:.1f} h"),
-        ("Task utilisation", f"{extracted['task_multiplier']:.0%}"),
+        ("Task utilization", f"{extracted['task_multiplier']:.0%}"),
         ("Model factor",     f"×{extracted['model_factor']:.1f}"),
         ("Physics proxy",    f"{np.expm1(extracted['log_energy_proxy']):.1f} Wh (raw)"),
     ]
-    ext_table = "\n".join(f"| {k} | **{v}** |" for k, v in ext_rows)
+    ext_table = "\n".join(f"| {k} | {v} |" for k, v in ext_rows)
     extracted_md = (
         "| Parameter | Value |\n"
         "|-----------|-------|\n"
@@ -418,8 +417,8 @@ def predict(text: str) -> Tuple:
     radar_fig  = _make_feature_radar(extracted)
 
     status_md = (
-        f"✅ Prediction complete using **{', '.join(predictions.keys())}**. "
-        f"Primary estimate from **{'DistilBERT' if 'DistilBERT' in predictions else list(predictions.keys())[-1]}**."
+        f"Prediction complete using {', '.join(predictions.keys())}. "
+        f"Primary estimate from {'DistilBERT' if 'DistilBERT' in predictions else list(predictions.keys())[-1]}."
     )
 
     return (
@@ -442,7 +441,7 @@ def build_ui() -> gr.Blocks:
         gr.Markdown(
             """
 # ⚡ AI Energy Predictor
-### Estimate energy consumption, cost & carbon footprint of AI training workloads — in plain English.
+### Estimate energy consumption, cost & carbon footprint of AI training workloads in plain English.
             """,
             elem_id="header-md",
         )
@@ -462,17 +461,17 @@ def build_ui() -> gr.Blocks:
                     variant  = "primary",
                     elem_id  = "predict-btn",
                 )
-                status_md = gr.Markdown("*Enter a description above and press Predict.*")
+                status_md = gr.Markdown("Enter a description above and press Predict.")
 
             # ── Primary metrics (right of input) ─────────────────────────
             with gr.Column(scale=3):
-                energy_md  = gr.Markdown("## —\n—")
-                cost_md    = gr.Markdown("## —\n—")
-                co2_md     = gr.Markdown("## —\n—")
+                energy_md  = gr.Markdown("")
+                cost_md    = gr.Markdown("")
+                co2_md     = gr.Markdown("")
                 context_md = gr.Markdown("")
 
         # ── Quick-try examples ───────────────────────────────────────────
-        gr.Markdown("**Quick examples — click to load:**")
+        gr.Markdown("Quick Examples. Click to Load:")
         with gr.Row():
             for p in EXAMPLE_PROMPTS[:4]:
                 btn = gr.Button(p[:52] + ("…" if len(p) > 52 else ""), size="sm")
@@ -503,8 +502,9 @@ def build_ui() -> gr.Blocks:
                 )
             with gr.Column(scale=2):
                 extracted_md = gr.Markdown(
-                    "| Parameter | Value |\n|---|---|\n| — | — |",
+                    "| Parameter | Value |\n|---|---|\n| | |",
                     label="Extracted Parameters",
+                    elem_id="extracted-table",
                 )
 
         # ── How it works tab ─────────────────────────────────────────────
@@ -514,30 +514,26 @@ def build_ui() -> gr.Blocks:
 
 | Model | Approach | Strength |
 |-------|----------|---------|
-| **Naive Baseline** | Always predicts training-set mean | Lower-bound benchmark |
-| **Classical ML (RF)** | TF-IDF + regex features → Random Forest | Fast, interpretable |
-| **DistilBERT** | Fine-tuned transformer regression | Understands semantics, best accuracy |
+| Naive Baseline | Always predicts training-set mean | Lower-bound benchmark |
+| Classical ML (RF) | TF-IDF + regex features → Random Forest | Fast, interpretable |
+| DistilBERT | Fine-tuned transformer regression | Understands semantics, best accuracy |
 
 ### Energy formula
 ```
-Energy (kWh) = GPU_watts × num_GPUs × hours × utilisation × PUE / 1000
+Energy (kWh) = GPU_watts × num_GPUs × hours × utilization × PUE / 1000
 ```
-- **PUE = 1.2** — typical datacenter Power Usage Effectiveness overhead
-- **Utilisation** = task_multiplier × model_compute_factor (capped at 1.0)
-- **Cost** at $0.10 / kWh (blended cloud GPU average)
-- **CO₂** at 0.385 kg CO₂e / kWh (US EPA 2023 average grid intensity)
+- PUE = 1.2 is the typical datacenter Power Usage Effectiveness overhead
+- Utilization = task_multiplier × model_compute_factor (capped at 1.0)
+- Cost at $0.10 / kWh (blended cloud GPU average)
+- CO2 at 0.385 kg CO₂e / kWh (US EPA 2023 average grid intensity)
 
 ### What "extracted features" means
-The classical model (and the radar chart) rely on regex extraction to pull
-`num_gpus`, `hours`, `gpu_watts`, `task_multiplier`, and `model_factor`
-directly from your text. DistilBERT doesn't need these — it learns the
-mapping from raw tokens. Comparing the two is the core experiment of this project.
+The classical model (and the radar chart) rely on regex extraction to pull num_gpus, hours, gpu_watts, task_multiplier, and model_factor directly from your text. DistilBERT doesn't need these. It learns the mapping from raw tokens. Comparing the two is the core experiment of this project.
             """)
 
         # ── Footer ────────────────────────────────────────────────────────
         gr.Markdown(
-            "*AI Energy Predictor · AI-540 Final Project · "
-            "Estimates are for planning purposes only — real workloads vary.*",
+            "AI Energy Predictor · Estimates are for planning purposes only & real workloads vary.",
         )
 
         # ── Wire predict button & Enter key ──────────────────────────────
@@ -558,4 +554,4 @@ mapping from raw tokens. Comparing the two is the core experiment of this projec
 
 if __name__ == "__main__":
     demo = build_ui()
-    demo.launch(share=True, show_error=True)
+    demo.launch(share=False, server_port=7860, show_error=True)

@@ -25,6 +25,8 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from scripts.build_features import StructuredFeatureExtractor
+
+# loading the models
 from scripts.model import NaiveBaseline, ClassicalMLModel, TransformerModel
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -556,4 +558,4 @@ mapping from raw tokens. Comparing the two is the core experiment of this projec
 
 if __name__ == "__main__":
     demo = build_ui()
-    demo.launch(share=False, server_port=7860, show_error=True)
+    demo.launch(share=True, show_error=True)

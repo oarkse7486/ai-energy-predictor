@@ -40,13 +40,6 @@ ai-energy-predictor/
 │   ├── processed/          ← Feature matrices (structured / tfidf / combined)
 │   └── outputs/            ← Figures and analysis outputs
 │
-├── notebooks/
-│   ├── 01_eda.ipynb
-│   ├── 02_baseline_model.ipynb
-│   ├── 03_classical_ml.ipynb
-│   ├── 04_deep_learning.ipynb
-│   └── 05_experiment_structured_vs_unstructured.ipynb
-│
 └── .gitignore
 ```
 
@@ -66,7 +59,7 @@ The **deployed model** is DistilBERT. All three tiers run in parallel in the app
 
 ## Key Experiment
 
-**Notebook 5 — Structured vs. Unstructured Input Comparison**
+**Structured vs. Unstructured Input Comparison**
 
 Three Ridge regressors are trained under conditions:
 - `structured` — regex-extracted numeric features only (num_gpus, hours, gpu_watts, task_multiplier, model_factor)
@@ -135,7 +128,7 @@ git push hf main
 ## Energy Estimation Formula
 
 ```
-Energy (kWh) = GPU_TDP_watts × num_GPUs × duration_hours × utilization × PUE / 1000
+Energy (kWh) = GPU_TDP_watts × num_GPUs × duration_hours × utilisation × PUE / 1000
 ```
 
 | Parameter | Value / Source |
@@ -174,13 +167,13 @@ All changes are merged to `develop` via pull requests. `develop` is merged to `m
 
 ## Results
 
-*(Populated after running `python setup.py` — see `models/results.json`)*
+5000 samples, 5 epochs, random_state=42. Full metrics in `models/results.json`.
 
 | Model | RMSE (kWh) | MAE (kWh) | R² | MAPE |
 |-------|-----------|----------|-----|------|
-| Naive Baseline | — | — | — | — |
-| Classical ML | — | — | — | — |
-| DistilBERT | — | — | — | — |
+| Naive Baseline | 153.61 | 80.59 | -0.0017 | 4362.04% |
+| Classical ML (RF) | 56.41 | 15.90 | 0.8649 | 82.93% |
+| DistilBERT | 25.66 | 7.51 | 0.9721 | 13.65% |
 
 ---
 

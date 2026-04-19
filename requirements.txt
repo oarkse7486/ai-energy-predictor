@@ -1,24 +1,23 @@
-# ── Core ML / NLP ────────────────────────────────────────────────────────────
+# Core ML / NLP
 torch>=2.1.0
 transformers>=4.38.0
 accelerate>=0.27.0
 datasets>=2.17.0
 
-# ── Classical ML ──────────────────────────────────────────────────────────────
+# Classical ML
 scikit-learn>=1.4.0
 scipy>=1.12.0
 joblib>=1.3.0
 
-# ── Data handling ─────────────────────────────────────────────────────────────
+# Data handling
 numpy>=1.26.0
 pandas>=2.2.0
 
-# ── Application & visualisation ───────────────────────────────────────────────
+# Application and visualisation
 gradio>=4.20.0
 plotly>=5.20.0
 
-# ── Notebooks (exploration only, not used in production) ─────────────────────
+# Utilities
 matplotlib>=3.8.0
 seaborn>=0.13.0
 tqdm>=4.66.0
-ipykernel>=6.29.0

@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Data (raw + processed)
+data/raw/
+data/processed/
+data/outputs/
+
+# Trained model weights (tracked via HF Hub or Git LFS)
+models/transformer/model_weights.pt
+models/transformer/tokenizer/
+
+# Keep model metadata and results
+!models/results.json
+!models/naive/
+!models/classical/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+*.swp
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Environment variables
+.env
+.env.local
+
+# Hugging Face cache
+~/.cache/huggingface/
